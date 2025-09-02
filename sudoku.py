@@ -1,3 +1,4 @@
+# python sudoku.py
 DIGITS = set(range(1, 10))
 
 def grid_for(i, j, board):
