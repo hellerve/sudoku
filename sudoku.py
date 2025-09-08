@@ -4,13 +4,15 @@ DIGITS = set(range(1, 10))
 def grid_for(i, j, board):
     r0 = i - i % 3
     c0 =j - j % 3
-    return {board[r][c] for r in range(r0, r0 + 3) for c in range(c0, c0 + 3)}
+    return {board[r][c]
+        for r in range(r0, r0 + 3)
+        for c in range(c0, c0 + 3)}
 
 
 def candidates(i, j, board):
-    if board[i][j]:
-        return {board[i][j]}
-    used = set(board[i]) | {row[j] for row in board} | grid_for(i, j, board)
+    used = (set(board[i]) |
+        {row[j] for row in board} |
+        grid_for(i, j, board))
     used.discard(0)
     return DIGITS - used
 
@@ -34,7 +36,9 @@ def propagate(board):
 
 def find_mrv_cell(board):
     opts = [((i, j), candidates(i, j, board))
-            for i in range(9) for j in range(9) if board[i][j] == 0]
+            for i in range(9)
+            for j in range(9)
+            if board[i][j] == 0]
     return min(opts, key=lambda t: len(t[1]))
 
 
