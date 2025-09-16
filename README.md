@@ -9,7 +9,7 @@ the language.
 
 - [`sudoku.py`: written in Python. Reference implementation. Using MRV and DFS.](https://blog.veitheller.de/Six_Simple_Sudoku_Solvers_I:_Python_%28Reference%29.html)
 - [`sudoku.lisp`: written in SBCL. Leveraging macros, bitsets, and type and
-  optimization declarations.](http://blog.veitheller.de/Six_Simple_Sudoku_Solvers_II:_Common_Lisp.html)
+  optimization declarations.](https://blog.veitheller.de/Six_Simple_Sudoku_Solvers_II:_Common_Lisp.html)
 - `sudoku.pro`: written in SWI Prolog. Declarative, leverages Prolog for core
   algorithmn. **PREPARED**
 - `sudoku.hs`: written in Haskell. Leverages types, immutability, and searching
