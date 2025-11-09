@@ -15,8 +15,8 @@ the language.
 - [`sudoku.hs`: written in Haskell. Leverages types and state using monads.](https://blog.veitheller.de/Six_Simple_Sudoku_Solvers_IV:_Haskell.html)
 - [`sudoku.rs`: written in Rust. Trying to get it as raw and low-level as it gets
   and minimize allocations.](https://blog.veitheller.de/Six_Simple_Sudoku_Solvers_V:_Rust.html)
-- `sudoku.ex`: written in Elixir. Utilizes the Beam and concurrency on first
-  split. **PREPARED**
+- [`sudoku.ex`: written in Elixir. Utilizes the Beam and concurrency on first
+  split.](https://blog.veitheller.de/Six_Simple_Sudoku_Solvers_VI:_Elixir.html)
 
 Each of them is accompanied by a blog post, so check them out if you want more
 information.
