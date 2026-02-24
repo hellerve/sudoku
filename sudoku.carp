@@ -1,0 +1,165 @@
+; carp -x sudoku.carp
+(use IO)
+(use Array)
+
+(def all-mask 0b111111111)
+
+(defn digit-mask [d] (if (= d 0) 0 (bit-shift-left 1 (- d 1))))
+(defn mask-has? [m d] (/= (bit-and m (digit-mask d)) 0))
+
+(defn mask-popcount [m]
+  (let-do [c 0]
+    (for (d 1 10) (when (mask-has? m d) (set! c (+ c 1))))
+    c))
+
+(defn mask-single->digit [m]
+  (let-do [r 0]
+    (for (d 1 10) (when (and (= r 0) (mask-has? m d)) (set! r d)))
+    r))
+
+(defn grid-get [g i] @(Array.unsafe-nth g i))
+
+(defn idx-row [i] (/ i 9))
+(defn idx-col [i] (Int.mod i 9))
+
+(defn row-indices [i]
+  (let [s (* 9 (idx-row i))]
+    (Result.unwrap-or-zero (Array.range s (+ s 8) 1))))
+
+(defn col-indices [i]
+  (let [c (idx-col i)]
+    (Result.unwrap-or-zero (Array.range c (+ c 72) 9))))
+
+(defn box-start [i]
+  (let [r (idx-row i)
+        c (idx-col i)]
+    (+ (* 27 (/ r 3)) (* 3 (/ c 3)))))
+
+(defn box-indices [i]
+  (let [s (box-start i)]
+    [ s (+ s 1) (+ s 2)
+      (+ s 9) (+ s 10) (+ s 11)
+      (+ s 18) (+ s 19) (+ s 20) ]))
+
+(defn used-from-indices-except [g i idxs]
+  (Array.reduce
+    &(fn [acc k]
+       (let [kk @k]
+         (if (= kk i)
+           acc
+           (let [v (grid-get g kk)]
+             (if (= v 0)
+               acc
+               (bit-or acc (digit-mask v)))))))
+    0
+    &idxs))
+
+(defn cell-used-except [g i]
+  (bit-or
+    (bit-or (used-from-indices-except g i (row-indices i))
+            (used-from-indices-except g i (col-indices i)))
+    (used-from-indices-except g i (box-indices i))))
+
+(defn candidates-mask [g i]
+  (let [used (cell-used-except g i)]
+    (bit-and all-mask (bit-not used))))
+
+(defn valid-grid? [g]
+  (let-do [ok true]
+    (for (i 0 81)
+      (when ok
+        (let [v (grid-get g i)]
+          (when (/= v 0)
+            (let [used (cell-used-except g i)]
+              (when (mask-has? used v) (set! ok false)))))))
+    ok))
+
+(defn solved? [g]
+  (let-do [ok true]
+    (for (i 0 81) (when (= (grid-get g i) 0) (set! ok false)))
+    ok))
+
+(defn propagate-singles [grid]
+  (if (valid-grid? &grid)
+    (let-do [ok true
+             changed true
+             g grid]
+      (while-do (and ok changed)
+        (set! changed false)
+        (for (i 0 81)
+          (when (and ok (= (grid-get &g i) 0))
+            (let [m (candidates-mask &g i)
+                  n (mask-popcount m)]
+              (cond
+                (= n 0) (set! ok false)
+                (= n 1)
+                  (do
+                    (Array.aset! &g i (mask-single->digit m))
+                    (set! changed true))
+                ())))))
+      (if ok (Maybe.Just g) (Maybe.Nothing)))
+    (Maybe.Nothing)))
+
+(defn choose-branch-idx [g]
+  (let-do [best-count 10
+           best-idx -1]
+    (for (i 0 81)
+      (when (= (grid-get g i) 0)
+        (let [c (mask-popcount (candidates-mask g i))]
+          (when (and (> c 0) (< c best-count))
+            (do
+              (set! best-count c)
+              (set! best-idx i))))))
+    (if (= best-idx -1) (Maybe.Nothing) (Maybe.Just best-idx))))
+
+(defmodule Maybe
+  (defn and-then [m f]
+    (match m
+      (Maybe.Just v) (@f v)
+      (Maybe.Nothing) (Maybe.Nothing))))
+
+(defn solve [grid]
+  (Maybe.and-then (propagate-singles grid)
+    &(fn [g]
+       (if (solved? &g)
+         (Maybe.Just g)
+         (Maybe.and-then (choose-branch-idx &g)
+           &(fn [idx]
+              (let [mask (candidates-mask &g idx)]
+                (let-do [res (Maybe.Nothing)]
+                  (for (d 1 10)
+                    (when (Maybe.nothing? &res)
+                      (when (mask-has? mask d)
+                        (let-do [g2 @&g]
+                          (Array.aset! &g2 idx d)
+                          (set! res (solve g2))))))
+                  res))))))))
+
+(defn print-grid [g]
+  (for (i 0 81)
+    (do
+      (let [v (grid-get g i)]
+        (if (= v 0)
+          (IO.print ". ")
+          (do
+            (IO.print &(str v))
+            (IO.print " "))))
+      (when (= (idx-col i) 8) (IO.println "")))))
+
+(def sample
+  [5 3 0  0 7 0  0 0 0
+   6 0 0  1 9 5  0 0 0
+   0 9 8  0 0 0  0 6 0
+
+   8 0 0  0 6 0  0 0 3
+   4 0 0  8 0 3  0 0 1
+   7 0 0  0 2 0  0 0 6
+
+   0 6 0  0 0 0  2 8 0
+   0 0 0  4 1 9  0 0 5
+   0 0 0  0 8 0  0 7 9])
+
+(defn-do main []
+  (match (solve @&sample)
+    (Maybe.Just sol) (print-grid &sol)
+    (Maybe.Nothing) (IO.println "\nNo solution.")))

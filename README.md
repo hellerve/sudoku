@@ -18,6 +18,7 @@ the language.
 - [`sudoku.ex`: written in Elixir. Utilizes the Beam and concurrency on first
   split.](https://blog.veitheller.de/Six_Simple_Sudoku_Solvers_VI:_Elixir.html)
 - [`sudolu.apl`: written in Dyalog APL. Uses arrays and terse operators to their fullest.](https://blog.veitheller.de/Simple_Sudoku_Solvers_SII,_EI:_Dyalog_APL.html)
+- [`sudolu.carp`: written in Carp. Uses functional and imperative programming as it sees fit.](https://blog.veitheller.de/Simple_Sudoku_Solvers_SII,_EII:_Carp.html)
 
 Each of them is accompanied by a blog post, so check them out if you want more
 information.
