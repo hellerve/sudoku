@@ -1,8 +1,6 @@
 #lang racket
 ;; racket sudoku.rkt
 
-;; --- a µKanren core ---
-
 (struct lvar (idx) #:transparent)
 
 (define (walk t s)
@@ -19,7 +17,6 @@
       [(lvar? v) (hash-set s v u)]
       [else #f])))
 
-;; a state is a substitution and a fresh-variable counter
 (define empty-state (cons (hash) 0))
 
 (define mzero '())
@@ -33,10 +30,6 @@
   (let ([c (cdr st)])
     ((f (lvar c)) (cons (car st) (add1 c)))))
 
-;; note: µKanren proper swaps the arguments in the second case
-;; ((mplus $2 ($1))) to interleave streams fairly. our search tree is
-;; finite and pruned by propagation, so we search depth-first instead;
-;; see the blog post for what fairness does to a near-empty board.
 (define (mplus $1 $2)
   (cond
     [(null? $1) $2]
@@ -54,8 +47,6 @@
 
 (define (fail st) mzero)
 (define (succeed st) (unit st))
-
-;; --- the sugar ---
 
 (define-syntax-rule (Zzz g) (λ (st) (λ () (g st))))
 
@@ -88,14 +79,10 @@
   (let ([$ (pull $)])
     (if (null? $) #f (car $))))
 
-;; --- sudoku on top ---
-
 (define digits '(1 2 3 4 5 6 7 8 9))
 
 (define (idx i j) (+ (* 9 i) j))
 
-;; for every cell, the indices of the cells it shares a row, column,
-;; or box with (itself excluded)
 (define peers
   (for*/vector ([i 9] [j 9])
     (define r0 (* 3 (quotient i 3)))
@@ -115,11 +102,6 @@
              (vector-ref b k))
            digits))
 
-;; the whole solver is one goal. it walks the board under the current
-;; substitution, picks the most constrained cell, and branches on its
-;; candidates, delaying recursion into the stream. a forced cell is
-;; just an mrv cell with one candidate, so propagation is the case in
-;; which the disj below is deterministic.
 (define ((solveo cells) st)
   (define s (car st))
   (define b (for/vector ([c cells])

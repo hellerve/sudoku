@@ -22,6 +22,7 @@ the language.
 - [`sudolu.fs`: written in Forth. Stack-tical programming.](https://blog.veitheller.de/Simple_Sudoku_Solvers_SII,_EIII:_Forth.html)
 - [`sudoku.st`: written in Pharo Smalltalk inside Glamorous Toolkit. Models the board as a live object graph with moldable inspector views.](https://blog.veitheller.de/Simple_Sudoku_Solvers_SII,_EIV:_Smalltalk.html)
 - [`sudoku.rkt`: written in Racket with a custom µKanren. Logic programming à la carte.](https://blog.veitheller.de/Simple_Sudoku_Solvers_SII,_EV:_Racket_miniKanren.html)
+- [`sudoku.sql`: written in SQL (sqlite). 'nuff said.](https://blog.veitheller.de/Simple_Sudoku_Solvers_SII,_EVI:_SQL.html)
 
 Each of them is accompanied by a blog post, so check them out if you want more
 information.
