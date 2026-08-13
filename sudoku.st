@@ -25,7 +25,6 @@ addGroup: aGroup
 
 !SudokuCell methodsFor: 'solving'!
 candidates
-	"Digits not yet placed in any of this cell's three constraint groups."
 	| used |
 	used := groups inject: Set new into: [:acc :g | acc union: g placedValues].
 	^(1 to: 9) asSet difference: used
@@ -123,7 +122,6 @@ initialize
 
 !SudokuGroup methodsFor: 'accessing'!
 placedValues
-	"The set of digits already committed in this group."
 	^(cells select: [:c | c isPlaced]) collect: [:c | c value] as: Set
 
 
@@ -145,8 +143,6 @@ cellAt: anIndex
 
 !SudokuBoard methodsFor: 'copying'!
 copy
-	"Return a fresh board with its own cells and groups, but the same values.
-	 initialize wires up a new constraint graph; we then stamp in the values."
 	| newBoard |
 	newBoard := self class new.
 	1 to: 81 do: [:k |
@@ -198,8 +194,6 @@ gtGridFor: aView
 
 !SudokuBoard methodsFor: 'initialization'!
 initialize
-	"Build 81 cells and 27 groups (9 rows, 9 columns, 9 boxes), wiring each
-	 cell into exactly the three groups it belongs to."
 	| rows cols boxes |
 	cells := (1 to: 81) collect: [:_ | SudokuCell new].
 	rows  := (1 to: 9) collect: [:_ | SudokuGroup new].
@@ -230,7 +224,6 @@ isSolved
 
 !SudokuBoard methodsFor: 'solving'!
 mrvCell
-	"The empty cell with the fewest candidates — best branching choice."
 	^self emptyCells
 		ifEmpty: [nil]
 		ifNotEmpty: [:empties |
@@ -262,8 +255,6 @@ printOn: aStream
 
 !SudokuBoard methodsFor: 'solving'!
 propagate
-	"Fill every cell that has exactly one candidate; repeat until stable.
-	 Returns false immediately on any contradiction."
 	| changed cands |
 	changed := true.
 	[changed] whileTrue: [
@@ -281,8 +272,6 @@ propagate
 
 !SudokuBoard methodsFor: 'solving'!
 solve
-	"Propagate constraints, then branch on the MRV cell.
-	 Returns a solved copy of the board, or nil if unsolvable."
 	| board cell result |
 	board := self copy.
 	board propagate ifFalse: [^nil].

@@ -43,7 +43,7 @@ create board  81 allot
 : popcount  ( mask -- n )
   0 swap  9 0 do  dup 1 and  rot +  swap  1 rshift  loop  drop ;
 
-: lowest-bit  ( mask -- pos )    \ 0-based position of lowest set bit
+: lowest-bit  ( mask -- pos )
   0  begin  over 1 and 0=  while  1+  swap 1 rshift swap  repeat  nip ;
 
 50 constant max-depth
