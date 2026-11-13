@@ -25,6 +25,7 @@ the language.
 - [`sudoku.sql`: written in SQL (sqlite). 'nuff said.](https://blog.veitheller.de/Simple_Sudoku_Solvers_SII,_EVI:_SQL.html)
 - [`sudoku.agda`: written in Agda. Proofs included (but only partially).](https://blog.veitheller.de/Simple_Sudoku_Solvers_SIII,_EI:_Agda.html)
 - [`sudoku.s`: written in AArch64 assembly for macOS. Trying to stay as low-level as possible.](https://blog.veitheller.de/Simple_Sudoku_Solvers_SIII,_EII:_Assembly.html)
+- [`sudoku.v`: written in icarus Verilog, showcasing my inability to design a coherent circuit.](https://blog.veitheller.de/Simple_Sudoku_Solvers_SIII,_EIII:_Verilog.html)
 
 Each of them is accompanied by a blog post, so check them out if you want more
 information.
